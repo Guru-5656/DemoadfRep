@@ -1,0 +1,15 @@
+{
+	"name": "githubadfprasad",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "196615c9-6428-490f-a566-80f462b4f660",
+		"tenantId": "922a22d7-ba6a-487b-ac31-930581eedbf9"
+	}
+}
