@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "githubadfprasad"
 		},
+		"AzureBlobStoragefor_github_connectionString": {
+			"value": ""
+		},
 		"containerUri": {
 			"value": ""
 		},

@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "githubadfprasad"
 		},
+		"AzureBlobStoragefor_github_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStoragefor_github'"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -33,6 +37,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"AzureBlobStoragefor_github_connectionString": {
+						"value": "[parameters('AzureBlobStoragefor_github_connectionString')]"
 					}
 				}
 			},
