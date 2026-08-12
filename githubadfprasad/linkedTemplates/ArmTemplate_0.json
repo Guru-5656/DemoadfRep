@@ -14,6 +14,22 @@
 		"AzureBlobStoragefor_github_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStoragefor_github'"
+		},
+		"LS_Sqlserver_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_Sqlserver'"
+		},
+		"LS_Sqlserver_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "DESKTOP-129IDC3\\SQLEXPRESS02"
+		},
+		"LS_Sqlserver_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "Testdatabase"
+		},
+		"LS_Sqlserver_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sa"
 		}
 	},
 	"variables": {
@@ -66,6 +82,16 @@
 				"typeProperties": {
 					"connectionString": "[parameters('AzureBlobStoragefor_github_connectionString')]"
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/selfhostedIR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
 			},
 			"dependsOn": []
 		},
@@ -160,6 +186,34 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_Sqlserver')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('LS_Sqlserver_properties_typeProperties_server')]",
+					"database": "[parameters('LS_Sqlserver_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('LS_Sqlserver_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_Sqlserver_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "selfhostedIR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/selfhostedIR')]"
 			]
 		},
 		{
@@ -262,7 +316,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Web1",
+						"name": "Web_Activity",
 						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
@@ -301,6 +355,48 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStoragefor_github')]",
 				"[concat(variables('factoryId'), '/datasets/inputdataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline4')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Execute_Sql",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "LS_Sqlserver",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "select * from customers"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Sqlserver')]"
 			]
 		}
 	]
