@@ -21,7 +21,7 @@
 				"typeProperties": {
 					"scripts": [
 						{
-							"type": "Query",
+							"type": "NonQuery",
 							"text": "select * from customers"
 						}
 					],
